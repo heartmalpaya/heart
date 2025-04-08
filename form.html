@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Planner</title>
+    <link rel="icon" type="image/x-icon" href="image.jpg">
+    <style>
+        body {
+            font-family: Script MT Bold,Bookman Old Style;
+            margin: 0;
+            padding: 0;
+            background:url('background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+            text-align: center;
+        }
+        header {
+            background-color: #800B19;
+            padding: 25px;
+            color: #DAA755;
+            text-align: center;
+        }
+        footer {
+            background-color: #800B19;
+            color: #DAA755;
+            padding: 60px;
+            width: 100%;
+            text-align: center;
+            position: relative; 
+            bottom: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 30px;
+            background: #800B19;
+            color:#DAA755 ;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .menu {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .menu button {
+            font-family: Script MT Bold;
+            padding: 15px 30px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            background: #DAA755;
+            color:#800B19;
+        }
+        .section {
+            display: none;
+            margin-top: 30px;
+        }
+        .active {
+            display: block;
+        }
+        input, select, textarea {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .event, .service {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .event div, .service div {
+            flex: 1 1 calc(33% - 40px);
+            min-width: 300px;
+            max-width: 100%;
+            text-align: center;
+            cursor: pointer;
+        }
+        .event img, .service img {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .event img:hover, .service img:hover {
+            transform: scale(1.05);
+        }
+        .budget-summary {
+            text-align: left;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+        .budget-summary p {
+            font-size: 18px;
+        }
+        @media (max-width: 768px) {
+            .event div, .service div {
+                flex: 1 1 100%;
+            }
+        }
+        /* Floating Receipt Style */
+        .receipt-float {
+            position: fixed;
+            top: 20%;
+            right: 10%;
+            background-color: #800B19;
+            color: #DAA755;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            z-index: 9999;
+            display: none;
+        }
+        .receipt-float h2, .receipt-float p {
+            margin: 10px 0;
+        }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            color: #DAA755;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        /* History Section */
+        .history {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .history ul {
+            list-style: none;
+            padding: 0;
+        }
+        .history li {
+            background-color: #DAA755;
+            color: #800B19;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header Section -->
+    <header>
+        <h1>EVENT PLANNER</h1>
+        <h2>Welcome to Event Planner</h2>
+    </header>
+
+    <div class="menu">
+        <button onclick="showSection('contact')">Contact</button>
+        <button onclick="showSection('events')">Events</button>
+        <button onclick="showSection('services')">Services</button>
+        <button onclick="showSection('budget')">Budget Summary</button>
+    </div>
+
+    <div class="container">
+        <!-- Contact Section -->
+        <div id="contact" class="section active">
+            <h2>Contact Us</h2>
+            <form onsubmit="return validateContactForm(event)">
+                <input type="text" id="name" placeholder="Full Name" required>
+                <input type="tel" id="contactNumber" placeholder="Contact Number" required>
+                <input type="date" id="eventDate" required>
+                <select id="eventType" required>
+                    <option value="">Select Event Type</option>
+                    <option value="Wedding">Wedding</option>
+                    <option value="Christening">Christening</option>
+                    <option value="Birthday">Birthday</option>
+                </select>
+
+
+                <button type="submit">Submit</button>
+            </form>
+            <div class="history">
+                <button onclick="toggleHistory()">History</button>
+                <ul id="historyList"></ul>
+            </div>
+        </div>
+
+        <!-- Events Section -->
+        <div id="events" class="section">
+            <h2>Our Events</h2>
+            <div class="event">
+                <div>
+                    <h3>Birthday</h3>
+                    <img src="birthday.jpg" alt="Birthday">
+                </div>
+                <div>
+                    <h3>Christening</h3>
+                    <img src="christening.jpg" alt="Christening">
+                </div>
+                <div>
+                    <h3>Wedding</h3>
+                    <img src="wedding.jpg" alt="Wedding">
+                </div>
+            </div>
+        </div>
+
+        <!-- Services Section with Slideshow -->
+        <div id="services" class="section">
+            <h2>Our Services</h2>
+            <div class="service">
+                <div onclick="changeServiceImage('catering')">
+                    <h3>Catering</h3>
+                    <img id="catering" src="catering1.jpg" alt="Catering">
+                </div>
+                <div onclick="changeServiceImage('decoration')">
+                    <h3>Decoration</h3>
+                    <img id="decoration" src="decoration1.jpg" alt="Decoration">
+                </div>
+                <div onclick="changeServiceImage('venue')">
+                    <h3>Venue</h3>
+                    <img id="venue" src="venue1.jpg" alt="Venue">
+                </div>
+            </div>
+        </div>
+
+        <!-- Budget Summary Section -->
+        <div id="budget" class="section">
+            <h2>Budget Summary</h2>
+            <div class="budget-summary">
+                <p>Number of Guests: <input type="number" id="numGuests" min="1" oninput="calculateTotal()"></p>
+                <p>Cost per Guest: ₱150</p>
+                <p>Total Food & Catering Cost: ₱<span id="foodCost">0</span></p>
+                <p>Assign Staff: <input type="number" id="numStaff" value="5" min="1" oninput="calculateTotal()"></p>
+                <p>Cost per Staff: ₱1,000</p>
+                <p>Service Cost (Venue): ₱10,000</p>
+                <p>Decoration Cost: ₱5,000</p>
+                <h2>Total : ₱<span id="totalCost">15000</span></h2>
+                <button onclick="submitBudgetSummary()">Submit</button>
+            </div>
+        </div>
+
+        <!-- Receipt Section (floating) -->
+        <div id="receipt" class="receipt-float" style="display: none;">
+            <button class="close-button" onclick="closeReceipt()">X</button>
+            <h2>Receipt</h2>
+            <p><strong>Name:</strong> <span id="receiptName"></span></p>
+            <p><strong>Contact Number:</strong> <span id="receiptContact"></span></p>
+            <p><strong>Event Date:</strong> <span id="receiptDate"></span></p>
+            <p><strong>Event Type:</strong> <span id="receiptEvent"></span></p>
+            <hr>
+            <h3>Budget Summary</h3>
+            <p><strong>Number of Guests:</strong> <span id="receiptGuests"></span></p>
+            <p><strong>Cost per Guest:</strong> ₱150</p>
+            <p><strong>Total Food & Catering Cost:</strong> ₱<span id="receiptFoodCost"></span></p>
+            <p><strong>Staff Count:</strong> <span id="receiptStaff"></span></p>
+            <p><strong>Total Staff Cost:</strong> ₱<span id="receiptStaffCost"></span></p>
+            <p><strong>Decoration & Venue:</strong> ₱<span id="receiptDecorationVenueCost"></span></p>
+            <h3>Total Cost: ₱<span id="receiptTotal"></span></h3>
+        </div>
+
+    </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>Program and Developed by: Heart T. Malpaya</p>
+    </footer>
+    <script>
+        function showSection(section) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(section).classList.add('active');
+        }
+
+        const serviceImages = {
+            catering: ["catering1.jpg", "catering2.jpg", "catering3.jpg", "catering4.jpg", "catering5.jpg"],
+            decoration: ["decoration1.jpg", "decoration2.jpg", "decoration3.jpg","decoration4.jpg","decoration5.jpg"],
+            venue: ["venue1.jpg", "venue2.jpg", "venue3.jpg","venue4.jpg","venue5.jpg"],
+        };
+
+        const currentIndex = { catering: 0, decoration: 0, venue: 0 };
+
+        function changeServiceImage(service) {
+            currentIndex[service] = (currentIndex[service] + 1) % serviceImages[service].length;
+            document.getElementById(service).src = serviceImages[service][currentIndex[service]];
+        }
+
+        function calculateTotal() {
+            const guests = parseInt(document.getElementById("numGuests").value) || 0;
+            const staff = parseInt(document.getElementById("numStaff").value) || 0;
+
+            const totalCost = (guests * 150) + (staff * 1000) + 15000;
+
+            document.getElementById("totalCost").textContent = totalCost;
+            document.getElementById("contactTotalCost").textContent = totalCost;
+        }
+    </script>
+
+    <script>
+        function showSection(section) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(function(sec) {
+                sec.classList.remove('active');
+            });
+            document.getElementById(section).classList.add('active');
+        }
+
+        function validateContactForm(event) {
+            event.preventDefault();
+            var name = document.getElementById('name').value;
+            var contactNumber = document.getElementById('contactNumber').value;
+            var eventDate = document.getElementById('eventDate').value;
+            var eventType = document.getElementById('eventType').value;
+
+            if (name && contactNumber && eventDate && eventType) {
+                // Get the values for the number of guests and staff
+                var numGuests = document.getElementById('numGuests').value;
+                var numStaff = document.getElementById('numStaff').value;
+
+                // Calculate the total costs
+                var foodCost = numGuests * 150;
+                var staffCost = numStaff * 1000;
+                var decorationAndVenueCost = 15000; // Static cost for decoration and venue
+                var totalCost = foodCost + staffCost + decorationAndVenueCost;
+
+                // Update the receipt values
+                document.getElementById('receiptName').innerText = name;
+                document.getElementById('receiptContact').innerText = contactNumber;
+                document.getElementById('receiptDate').innerText = eventDate;
+                document.getElementById('receiptEvent').innerText = eventType;
+                document.getElementById('receiptGuests').innerText = numGuests;
+                document.getElementById('receiptFoodCost').innerText = foodCost;
+                document.getElementById('receiptStaff').innerText = numStaff;
+                document.getElementById('receiptStaffCost').innerText = staffCost;
+                document.getElementById('receiptDecorationVenueCost').innerText = decorationAndVenueCost;
+                document.getElementById('receiptTotal').innerText = totalCost;
+
+                // Show the receipt
+                document.getElementById('receipt').style.display = 'block';
+            }
+        }
+
+        function closeReceipt() {
+            document.getElementById('receipt').style.display = 'none';
+            // Add receipt to the history
+            const historyList = document.getElementById("historyList");
+            const historyItem = document.createElement("li");
+            historyItem.innerHTML = `Receipt for ${document.getElementById('receiptName').innerText} - ₱${document.getElementById('receiptTotal').innerText}`;
+            historyList.appendChild(historyItem);
+        }
+
+        function calculateTotal() {
+            var numGuests = document.getElementById('numGuests').value;
+            var numStaff = document.getElementById('numStaff').value;
+
+            var foodCost = numGuests * 150;
+            var staffCost = numStaff * 1000;
+            var decorationAndVenueCost = 15000;
+
+            var totalCost = foodCost + staffCost + decorationAndVenueCost;
+            document.getElementById('foodCost').innerText = foodCost;
+            document.getElementById('totalCost').innerText = totalCost;
+        }
+
+        function submitBudgetSummary() {
+            // Automatically trigger the submission after clicking the submit button
+            validateContactForm(event);
+            showSection('contact'); // Show the Contact Section after submitting
+        }
+
+        function toggleHistory() {
+            const historyList = document.getElementById("historyList");
+            if (historyList.style.display === "none") {
+                historyList.style.display = "block";
+            } else {
+                historyList.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
